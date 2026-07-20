@@ -1,0 +1,292 @@
+/*=========================================
+AL ANSAR GARAGE — CHATBOT WIDGET
+Uses the site's existing CSS variables
+(see css/main.css :root) so it stays on-theme
+automatically if you ever restyle the site.
+=========================================*/
+
+.chatbot-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    z-index: 9998;
+    transition: var(--transition);
+}
+
+.chatbot-toggle:hover {
+    background: var(--primary-dark);
+    transform: scale(1.06);
+}
+
+.chatbot-toggle .cb-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--success);
+    color: #0a0a0a;
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatbot-window {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    height: 520px;
+    max-height: calc(100vh - 140px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9998;
+    opacity: 0;
+    transform: translateY(16px) scale(.97);
+    pointer-events: none;
+    transition: var(--transition);
+    font-family: var(--body-font);
+}
+
+.chatbot-window.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.cb-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.cb-header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cb-header-info .cb-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.cb-header-info h4 {
+    font-family: var(--heading-font);
+    font-size: 18px;
+    font-weight: var(--fw-semibold);
+    line-height: 1.1;
+}
+
+.cb-header-info span {
+    font-size: 12px;
+    opacity: .9;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cb-header-info span::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    display: inline-block;
+}
+
+.cb-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 20px;
+    cursor: pointer;
+    opacity: .85;
+    line-height: 1;
+    padding: 4px;
+}
+
+.cb-close:hover { opacity: 1; }
+
+.cb-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--bg-primary);
+}
+
+.cb-messages::-webkit-scrollbar { width: 5px; }
+.cb-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.cb-msg {
+    max-width: 82%;
+    padding: 10px 13px;
+    border-radius: var(--radius-md);
+    font-size: 14.5px;
+    line-height: 1.45;
+    animation: cbFadeIn .25s ease;
+}
+
+@keyframes cbFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cb-msg.bot {
+    background: var(--bg-secondary);
+    color: var(--light);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.cb-msg.user {
+    background: var(--primary);
+    color: var(--white);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.cb-msg a { color: var(--primary-light); }
+.cb-msg.bot a { text-decoration: underline; }
+
+.cb-quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 2px 2px 4px;
+    align-self: flex-start;
+    max-width: 100%;
+}
+
+.cb-chip {
+    background: var(--bg-secondary);
+    border: 1px solid var(--primary);
+    color: var(--primary-light);
+    padding: 7px 13px;
+    border-radius: var(--radius-xl);
+    font-size: 13px;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.cb-chip:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.cb-typing {
+    display: flex;
+    gap: 4px;
+    padding: 12px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    width: fit-content;
+}
+
+.cb-typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gray);
+    animation: cbBounce 1.2s infinite ease-in-out;
+}
+
+.cb-typing span:nth-child(2) { animation-delay: .15s; }
+.cb-typing span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes cbBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.cb-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+
+.cb-input-row input {
+    flex: 1;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 10px 15px;
+    font-size: 14px;
+    font-family: var(--body-font);
+    outline: none;
+}
+
+.cb-input-row input:focus { border-color: var(--primary); }
+
+.cb-input-row button {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.cb-input-row button:hover { background: var(--primary-dark); }
+
+@media (max-width: 480px) {
+    .chatbot-window {
+        right: 16px;
+        left: 16px;
+        width: auto;
+        bottom: 90px;
+    }
+    .chatbot-toggle {
+        right: 16px;
+        bottom: 16px;
+    }
+}

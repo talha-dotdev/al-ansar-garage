@@ -133,6 +133,10 @@ RESPONSIVE MEDIA QUERIES
         gap:50px;
     }
 
+    .service-grid.reverse{
+    grid-template-columns:1fr;
+}
+
     .service-grid.reverse .service-content{
         order:2;
     }

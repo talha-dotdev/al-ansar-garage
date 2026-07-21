@@ -4,7 +4,7 @@ CONTACT FORM — connects to backend API
 
 // Change this to your Render URL once deployed, e.g.
 // const API_BASE = "https://al-ansar-backend.onrender.com";
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://al-ansar-garage.vercel.app";
 
 const contactForm = document.getElementById("contactForm");
 const statusEl = document.getElementById("cf-status");

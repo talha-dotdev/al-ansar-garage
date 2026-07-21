@@ -2,7 +2,7 @@
 HOME PAGE BOOKING FORM — connects to backend API
 =========================================*/
 
-const HOME_API_BASE = "http://localhost:5000"; // change to Render URL once deployed
+const HOME_API_BASE = "https://al-ansar-garage.vercel.app";// change to Render URL once deployed
 
 const homeContactForm = document.getElementById("homeContactForm");
 const hcfStatus = document.getElementById("hcf-status");

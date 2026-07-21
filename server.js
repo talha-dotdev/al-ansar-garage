@@ -36,9 +36,6 @@ app.use(async (req, res, next) => {
     }
 });
 
-app.get("/", (req, res) => {
-    res.send("🚗 Backend + Database Connected!");
-});
 
 app.use("/api/contact", contactRoutes);
 app.use("/api/booking", bookingRoutes);

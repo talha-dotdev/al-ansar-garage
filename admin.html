@@ -2,57 +2,412 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al Ansar Garage — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; background: #f4f4f4; color: #222; }
+:root{
+    /* Colors */
+    --bg-primary:#121212;
+    --bg-secondary:#1E1E1E;
+    --bg-card:#242424;
 
-  /* Login screen */
-  #loginScreen {
-    height: 100vh; display: flex; align-items: center; justify-content: center;
-  }
-  #loginBox {
-    background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    width: 300px; text-align: center;
-  }
-  #loginBox input {
-    width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;
-  }
-  #loginBox button {
-    width: 100%; padding: 10px; background: #c0392b; color: #fff; border: none;
-    border-radius: 4px; cursor: pointer; font-weight: bold;
-  }
-  #loginError { color: red; font-size: 14px; margin-top: 8px; }
+    --primary:#FF6B00;
+    --primary-dark:#E65C00;
+    --primary-light:#FF8A3D;
 
-  /* Dashboard */
-  #dashboard { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; }
-  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  header button { padding: 8px 14px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    --white:#F5F5F5;
+    --light:#E6E6E6;
+    --gray:#B0B0B0;
+    --dark-gray:#7A7A7A;
 
-  .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-  .tabs button { padding: 8px 16px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; }
-  .tabs button.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+    --border:#303030;
 
-  /* List view */
-  table { width: 100%; border-collapse: collapse; background: #fff; }
-  th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px; }
-  th { background: #333; color: #fff; }
+    --success:#2ECC71;
+    --danger:#E74C3C;
 
-  /* Calendar view */
-  #calendarHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  #calendarGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .dayCell {
-    background: #fff; min-height: 80px; padding: 6px; border-radius: 4px; font-size: 12px;
-    border: 1px solid #eee;
-  }
-  .dayNum { font-weight: bold; margin-bottom: 4px; }
-  .bookingTag {
-    background: #c0392b; color: #fff; padding: 2px 4px; border-radius: 3px; margin-top: 2px; font-size: 11px;
-  }
+    /* Fonts */
+    --heading-font:"Barlow Condensed",sans-serif;
+    --body-font:"Inter",sans-serif;
+
+    /* Font Sizes */
+    --fs-h1:56px;
+    --fs-h2:42px;
+    --fs-h3:30px;
+    --fs-h4:24px;
+    --fs-body:17px;
+    --fs-small:15px;
+
+    /* Font Weight */
+    --fw-normal:400;
+    --fw-medium:500;
+    --fw-semibold:600;
+    --fw-bold:700;
+    --fw-extra:800;
+
+    /* Border Radius */
+    --radius-sm:8px;
+    --radius-md:12px;
+    --radius-lg:18px;
+    --radius-xl:30px;
+
+    /* Shadows */
+    --shadow-sm:0 5px 15px rgba(0,0,0,.15);
+    --shadow-md:0 10px 25px rgba(0,0,0,.25);
+    --shadow-lg:0 20px 50px rgba(0,0,0,.35);
+
+    /* Container */
+    --container:1280px;
+
+    /* Transition */
+    --transition:.35s ease;
+
+    /* Z Index */
+    --z-modal:1000;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--body-font);
+    background: var(--bg-primary);
+    color: var(--light);
+    font-size: var(--fs-body);
+}
+
+a { color: inherit; }
+
+/* ---------- Login screen ---------- */
+#loginScreen {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#loginBox {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 40px 34px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 340px;
+    max-width: 100%;
+    text-align: center;
+}
+
+#loginBox h2 {
+    font-family: var(--heading-font);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3);
+    color: var(--white);
+    letter-spacing: .5px;
+    margin-bottom: 22px;
+}
+
+#loginBox input {
+    width: 100%;
+    padding: 13px 14px;
+    margin: 8px 0 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--white);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-body);
+    font-family: var(--body-font);
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+#loginBox input:focus { border-color: var(--primary); }
+
+#loginBox button {
+    width: 100%;
+    padding: 13px;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-body);
+    transition: background var(--transition);
+}
+
+#loginBox button:hover { background: var(--primary-dark); }
+
+#loginError { color: var(--danger); font-size: var(--fs-small); margin-top: 10px; min-height: 18px; }
+
+/* ---------- Dashboard ---------- */
+#dashboard {
+    display: none;
+    padding: 40px 24px;
+    max-width: var(--container);
+    margin: 0 auto;
+}
+
+header.adminHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+header.adminHeader h2 {
+    font-family: var(--heading-font);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h3);
+    color: var(--white);
+    letter-spacing: .5px;
+}
+
+header.adminHeader h2 span { color: var(--primary); }
+
+header.adminHeader button {
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--body-font);
+    font-weight: var(--fw-medium);
+    transition: var(--transition);
+}
+
+header.adminHeader button:hover { border-color: var(--primary); color: var(--primary-light); }
+
+.tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+
+.tabs button {
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--gray);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-family: var(--body-font);
+    font-weight: var(--fw-medium);
+    transition: var(--transition);
+}
+
+.tabs button.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+.tabs button:not(.active):hover { border-color: var(--primary); color: var(--primary-light); }
+
+/* ---------- List view ---------- */
+.tableWrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-size: var(--fs-small);
+}
+
+th {
+    background: var(--bg-secondary);
+    color: var(--gray);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 12px;
+}
+
+tbody tr { cursor: pointer; transition: background var(--transition); }
+tbody tr:hover { background: rgba(255,107,0,.06); }
+tbody tr:last-child td { border-bottom: none; }
+td { color: var(--light); }
+
+#emptyState {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--dark-gray);
+    font-size: var(--fs-body);
+    display: none;
+}
+
+/* ---------- Calendar view ---------- */
+#calendarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+#calendarMonthLabel {
+    font-family: var(--heading-font);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h4);
+    color: var(--white);
+}
+
+#calendarHeader button {
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#calendarHeader button:hover { border-color: var(--primary); color: var(--primary-light); }
+
+#calendarWeekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+#calendarWeekdays div {
+    text-align: center;
+    font-size: 12px;
+    color: var(--dark-gray);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+#calendarGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+
+.dayCell {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    min-height: 90px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+}
+
+.dayNum { font-weight: var(--fw-semibold); color: var(--gray); margin-bottom: 6px; }
+
+.msgTag {
+    background: var(--primary);
+    color: var(--white);
+    padding: 3px 6px;
+    border-radius: 4px;
+    margin-top: 3px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.msgTag:hover { background: var(--primary-dark); }
+
+/* ---------- Modal ---------- */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: 20px;
+}
+
+#modalBox {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    width: 380px;
+    max-width: 100%;
+    box-shadow: var(--shadow-lg);
+}
+
+#modalBox h3 {
+    font-family: var(--heading-font);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-h4);
+    color: var(--white);
+    margin-bottom: 18px;
+}
+
+.modalRow { margin-bottom: 12px; font-size: var(--fs-small); }
+.modalRow strong { color: var(--gray); font-weight: var(--fw-medium); display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+.modalRow span { color: var(--white); }
+
+.modalActions { display: flex; gap: 10px; margin: 18px 0; }
+
+.modalActions a {
+    flex: 1;
+    text-align: center;
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-small);
+    transition: var(--transition);
+}
+
+#callBtn { background: var(--bg-secondary); color: var(--white); border: 1px solid var(--border); }
+#callBtn:hover { border-color: var(--primary); }
+#whatsappBtn { background: #25D366; color: #fff; }
+#whatsappBtn:hover { filter: brightness(1.1); }
+
+#closeModalBtn {
+    width: 100%;
+    padding: 11px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--light);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--body-font);
+    font-weight: var(--fw-medium);
+}
+
+#closeModalBtn:hover { border-color: var(--primary); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+    #dashboard { padding: 24px 14px; }
+    header.adminHeader { flex-direction: column; align-items: flex-start; }
+    .tabs button { flex: 1; text-align: center; }
+
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+    thead { display: none; }
+    tbody tr {
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        padding: 10px 4px;
+    }
+    tbody td {
+        border: none;
+        padding: 4px 12px;
+        font-size: 13px;
+    }
+    tbody td::before {
+        content: attr(data-label);
+        font-weight: var(--fw-semibold);
+        display: inline-block;
+        width: 80px;
+        color: var(--gray);
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+
+    #calendarWeekdays div { font-size: 10px; }
+    .dayCell { min-height: 56px; font-size: 10px; padding: 4px; }
+    .msgTag { font-size: 9px; padding: 2px 4px; }
+}
 </style>
-<thead>
-  <tr><th>Name</th><th>Phone</th><th>Subject</th><th>Received</th><th>Email</th></tr>
-</thead>
 </head>
 <body>
 
@@ -60,7 +415,7 @@
 <div id="loginScreen">
   <div id="loginBox">
     <h2>Admin Login</h2>
-    <input type="password" id="passwordInput" placeholder="Password">
+    <input type="password" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter') login()">
     <button onclick="login()">Log In</button>
     <div id="loginError"></div>
   </div>
@@ -68,8 +423,8 @@
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-  <header>
-    <h2>Al Ansar Garage — Admin</h2>
+  <header class="adminHeader">
+    <h2>Al Ansar <span>Garage</span> — Admin</h2>
     <button onclick="logout()">Log Out</button>
   </header>
 
@@ -79,12 +434,15 @@
   </div>
 
   <div id="listView">
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Status</th></tr>
-      </thead>
-      <tbody id="bookingTableBody"></tbody>
-    </table>
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Phone</th><th>Subject</th><th>Received</th><th>Email</th></tr>
+        </thead>
+        <tbody id="msgTableBody"></tbody>
+      </table>
+      <div id="emptyState">No messages yet.</div>
+    </div>
   </div>
 
   <div id="calendarView" style="display:none;">
@@ -93,38 +451,35 @@
       <h3 id="calendarMonthLabel"></h3>
       <button onclick="changeMonth(1)">Next &rarr;</button>
     </div>
+    <div id="calendarWeekdays">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
     <div id="calendarGrid"></div>
   </div>
 </div>
 
-<div id="modalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:999;">
-  <div style="background:#fff; border-radius:8px; padding:24px; width:340px; max-width:90%;">
-    <h3>Booking Details</h3>
+<!-- MODAL -->
+<div id="modalOverlay">
+  <div id="modalBox">
+    <h3>Message Details</h3>
     <input type="hidden" id="modalId">
-    <p><strong>Name:</strong> <span id="modalName"></span></p>
-    <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
-    <p><strong>Service:</strong> <span id="modalService"></span></p>
-    <p><strong>Date:</strong> <span id="modalDate"></span></p>
-    <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+    <div class="modalRow"><strong>Name</strong><span id="modalName"></span></div>
+    <div class="modalRow"><strong>Phone</strong><span id="modalPhone"></span></div>
+    <div class="modalRow"><strong>Subject</strong><span id="modalService"></span></div>
+    <div class="modalRow"><strong>Received</strong><span id="modalDate"></span></div>
+    <div class="modalRow"><strong>Message</strong><span id="modalNotes"></span></div>
 
-    <div style="display:flex; gap:8px; margin:12px 0;">
-      <a id="callBtn" href="#" style="flex:1; text-align:center; background:#333; color:#fff; padding:8px; border-radius:4px; text-decoration:none;">Call</a>
-      <a id="whatsappBtn" href="#" target="_blank" style="flex:1; text-align:center; background:#25D366; color:#fff; padding:8px; border-radius:4px; text-decoration:none;">WhatsApp</a>
+    <div class="modalActions">
+      <a id="callBtn" href="#">Call</a>
+      <a id="whatsappBtn" href="#" target="_blank">WhatsApp</a>
     </div>
 
-    <label>Status:</label>
-    <select id="statusSelect" style="width:100%; padding:8px; margin:8px 0;">
-      <option value="pending">Pending</option>
-      <option value="confirmed">Confirmed</option>
-      <option value="completed">Completed</option>
-    </select>
-    <button id="saveStatusBtn" onclick="updateStatus()" style="width:100%; padding:10px; background:#c0392b; color:#fff; border:none; border-radius:4px; cursor:pointer;">Save Status</button>
-    <div id="modalMsg" style="margin-top:8px; font-size:13px;"></div>
-
-    <button onclick="closeModal()" style="width:100%; margin-top:10px; padding:8px; background:#eee; border:none; border-radius:4px; cursor:pointer;">Close</button>
+    <button id="closeModalBtn" onclick="closeModal()">Close</button>
   </div>
 </div>
-<script> const API_BASE = "https://al-ansar-garage.vercel.app/api";
+
+<script>
+const API_BASE = "https://al-ansar-garage.vercel.app/api";
 
 let token = localStorage.getItem("adminToken") || null;
 let contacts = [];
@@ -204,22 +559,27 @@ function showTab(tab) {
 
 // ---- LIST VIEW ----
 function renderList() {
-  const tbody = document.getElementById("bookingTableBody");
+  const tbody = document.getElementById("msgTableBody");
+  const emptyState = document.getElementById("emptyState");
   tbody.innerHTML = "";
 
-  // Newest first
+  if (!contacts.length) {
+    emptyState.style.display = "block";
+    return;
+  }
+  emptyState.style.display = "none";
+
   const sorted = [...contacts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   sorted.forEach(c => {
     const row = document.createElement("tr");
-    row.style.cursor = "pointer";
     const dateStr = c.createdAt ? new Date(c.createdAt).toLocaleString() : "-";
     row.innerHTML = `
-      <td>${c.name || ""}</td>
-      <td>${c.phone || "-"}</td>
-      <td>${c.subject || "General Inquiry"}</td>
-      <td>${dateStr}</td>
-      <td>${c.email || "-"}</td>
+      <td data-label="Name">${c.name || ""}</td>
+      <td data-label="Phone">${c.phone || "-"}</td>
+      <td data-label="Subject">${c.subject || "General Inquiry"}</td>
+      <td data-label="Received">${dateStr}</td>
+      <td data-label="Email">${c.email || "-"}</td>
     `;
     row.addEventListener("click", () => openContactModal(c._id));
     tbody.appendChild(row);
@@ -260,15 +620,14 @@ function renderCalendar() {
 
     let html = `<div class="dayNum">${day}</div>`;
     dayContacts.forEach(c => {
-      html += `<div class="bookingTag" data-id="${c._id}">${c.name || "Message"}</div>`;
+      html += `<div class="msgTag" data-id="${c._id}">${c.name || "Message"}</div>`;
     });
 
     cell.innerHTML = html;
     grid.appendChild(cell);
   }
 
-  grid.querySelectorAll(".bookingTag").forEach(tag => {
-    tag.style.cursor = "pointer";
+  grid.querySelectorAll(".msgTag").forEach(tag => {
     tag.addEventListener("click", (e) => {
       e.stopPropagation();
       openContactModal(tag.dataset.id);
@@ -312,6 +671,7 @@ function openContactModal(id) {
 
 function closeModal() {
   document.getElementById("modalOverlay").style.display = "none";
-}</script>
+}
+</script>
 </body>
 </html>

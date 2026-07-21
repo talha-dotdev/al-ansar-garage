@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Al Ansar Garage — Admin</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f4f4f4; color: #222; }
+
+  /* Login screen */
+  #loginScreen {
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+  }
+  #loginBox {
+    background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 300px; text-align: center;
+  }
+  #loginBox input {
+    width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;
+  }
+  #loginBox button {
+    width: 100%; padding: 10px; background: #c0392b; color: #fff; border: none;
+    border-radius: 4px; cursor: pointer; font-weight: bold;
+  }
+  #loginError { color: red; font-size: 14px; margin-top: 8px; }
+
+  /* Dashboard */
+  #dashboard { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  header button { padding: 8px 14px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+
+  .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+  .tabs button { padding: 8px 16px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; }
+  .tabs button.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  /* List view */
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px; }
+  th { background: #333; color: #fff; }
+
+  /* Calendar view */
+  #calendarHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  #calendarGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dayCell {
+    background: #fff; min-height: 80px; padding: 6px; border-radius: 4px; font-size: 12px;
+    border: 1px solid #eee;
+  }
+  .dayNum { font-weight: bold; margin-bottom: 4px; }
+  .bookingTag {
+    background: #c0392b; color: #fff; padding: 2px 4px; border-radius: 3px; margin-top: 2px; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="login()">Log In</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <h2>Al Ansar Garage — Admin</h2>
+    <button onclick="logout()">Log Out</button>
+  </header>
+
+  <div class="tabs">
+    <button id="listTabBtn" class="active" onclick="showTab('list')">List View</button>
+    <button id="calTabBtn" onclick="showTab('calendar')">Calendar View</button>
+  </div>
+
+  <div id="listView">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Phone</th><th>Service</th><th>Date</th><th>Status</th></tr>
+      </thead>
+      <tbody id="bookingTableBody"></tbody>
+    </table>
+  </div>
+
+  <div id="calendarView" style="display:none;">
+    <div id="calendarHeader">
+      <button onclick="changeMonth(-1)">&larr; Prev</button>
+      <h3 id="calendarMonthLabel"></h3>
+      <button onclick="changeMonth(1)">Next &rarr;</button>
+    </div>
+    <div id="calendarGrid"></div>
+  </div>
+</div>
+
+<div id="modalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:999;">
+  <div style="background:#fff; border-radius:8px; padding:24px; width:340px; max-width:90%;">
+    <h3>Booking Details</h3>
+    <input type="hidden" id="modalId">
+    <p><strong>Name:</strong> <span id="modalName"></span></p>
+    <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+    <p><strong>Service:</strong> <span id="modalService"></span></p>
+    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+    <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+
+    <div style="display:flex; gap:8px; margin:12px 0;">
+      <a id="callBtn" href="#" style="flex:1; text-align:center; background:#333; color:#fff; padding:8px; border-radius:4px; text-decoration:none;">Call</a>
+      <a id="whatsappBtn" href="#" target="_blank" style="flex:1; text-align:center; background:#25D366; color:#fff; padding:8px; border-radius:4px; text-decoration:none;">WhatsApp</a>
+    </div>
+
+    <label>Status:</label>
+    <select id="statusSelect" style="width:100%; padding:8px; margin:8px 0;">
+      <option value="pending">Pending</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="completed">Completed</option>
+    </select>
+    <button id="saveStatusBtn" onclick="updateStatus()" style="width:100%; padding:10px; background:#c0392b; color:#fff; border:none; border-radius:4px; cursor:pointer;">Save Status</button>
+    <div id="modalMsg" style="margin-top:8px; font-size:13px;"></div>
+
+    <button onclick="closeModal()" style="width:100%; margin-top:10px; padding:8px; background:#eee; border:none; border-radius:4px; cursor:pointer;">Close</button>
+  </div>
+</div>
+<script>const API_BASE = "https://al-ansar-garage.vercel.app/api";
+
+let token = localStorage.getItem("adminToken") || null;
+let bookings = [];
+let currentMonth = new Date();
+
+// ---- LOGIN ----
+async function login() {
+  const password = document.getElementById("passwordInput").value;
+  const errorEl = document.getElementById("loginError");
+  errorEl.textContent = "";
+
+  try {
+    const res = await fetch(`${API_BASE}/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorEl.textContent = data.error || "Login failed.";
+      return;
+    }
+
+    token = data.token;
+    localStorage.setItem("adminToken", token);
+    enterDashboard();
+  } catch (err) {
+    errorEl.textContent = "Could not reach server. Try again.";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("adminToken");
+  token = null;
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginScreen").style.display = "flex";
+}
+
+// ---- ON LOAD: check for existing session ----
+window.addEventListener("DOMContentLoaded", () => {
+  if (token) enterDashboard();
+});
+
+async function enterDashboard() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  await loadBookings();
+  renderList();
+  renderCalendar();
+}
+
+// ---- FETCH BOOKINGS ----
+async function loadBookings() {
+  try {
+    const res = await fetch(`${API_BASE}/booking`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (res.status === 401) {
+      logout();
+      return;
+    }
+
+    bookings = await res.json();
+  } catch (err) {
+    console.error("Failed to load bookings", err);
+  }
+}
+
+// ---- TABS ----
+function showTab(tab) {
+  document.getElementById("listTabBtn").classList.toggle("active", tab === "list");
+  document.getElementById("calTabBtn").classList.toggle("active", tab === "calendar");
+  document.getElementById("listView").style.display = tab === "list" ? "block" : "none";
+  document.getElementById("calendarView").style.display = tab === "calendar" ? "block" : "none";
+}
+
+// ---- LIST VIEW ----
+function renderList() {
+  const tbody = document.getElementById("bookingTableBody");
+  tbody.innerHTML = "";
+
+  bookings.forEach(b => {
+    const row = document.createElement("tr");
+    row.style.cursor = "pointer";
+    row.innerHTML = `
+      <td>${b.name || ""}</td>
+      <td>${b.phone || ""}</td>
+      <td>${b.service || ""}</td>
+      <td>${b.date || ""}</td>
+      <td><span class="statusBadge status-${b.status || "pending"}">${b.status || "pending"}</span></td>
+    `;
+    row.addEventListener("click", () => openBookingModal(b._id));
+    tbody.appendChild(row);
+  });
+}
+
+// ---- CALENDAR VIEW ----
+function changeMonth(delta) {
+  currentMonth.setMonth(currentMonth.getMonth() + delta);
+  renderCalendar();
+}
+
+function parseBookingDate(dateStr) {
+  // Handles either "YYYY-MM-DD" or falls back gracefully
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const label = document.getElementById("calendarMonthLabel");
+  grid.innerHTML = "";
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  label.textContent = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    grid.appendChild(document.createElement("div"));
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement("div");
+    cell.className = "dayCell";
+
+    const dayBookings = bookings.filter(b => {
+      const d = parseBookingDate(b.date);
+      return d && d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+    });
+
+    let html = `<div class="dayNum">${day}</div>`;
+    dayBookings.forEach(b => {
+      html += `<div class="bookingTag" data-id="${b._id}">${b.name || "Booking"}</div>`;
+    });
+
+    cell.innerHTML = html;
+    grid.appendChild(cell);
+  }
+
+  // click handlers for calendar tags
+  grid.querySelectorAll(".bookingTag").forEach(tag => {
+    tag.style.cursor = "pointer";
+    tag.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openBookingModal(tag.dataset.id);
+    });
+  });
+}
+
+// ---- MODAL: booking details, status update, contact links ----
+function openBookingModal(id) {
+  const b = bookings.find(x => x._id === id);
+  if (!b) return;
+
+  document.getElementById("modalName").textContent = b.name || "-";
+  document.getElementById("modalPhone").textContent = b.phone || "-";
+  document.getElementById("modalService").textContent = b.service || "-";
+  document.getElementById("modalDate").textContent = b.date || "-";
+  document.getElementById("modalNotes").textContent = b.notes || "No notes provided.";
+  document.getElementById("statusSelect").value = b.status || "pending";
+  document.getElementById("modalId").value = b._id;
+
+  const cleanPhone = (b.phone || "").replace(/[^0-9+]/g, "");
+  document.getElementById("callBtn").href = `tel:${cleanPhone}`;
+  document.getElementById("whatsappBtn").href = `https://wa.me/${cleanPhone.replace("+", "")}`;
+
+  document.getElementById("modalOverlay").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").style.display = "none";
+}
+
+async function updateStatus() {
+  const id = document.getElementById("modalId").value;
+  const status = document.getElementById("statusSelect").value;
+  const saveBtn = document.getElementById("saveStatusBtn");
+  const msgEl = document.getElementById("modalMsg");
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+  msgEl.textContent = "";
+
+  try {
+    const res = await fetch(`${API_BASE}/booking/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ status })
+    });
+
+    if (!res.ok) {
+      throw new Error("Update failed");
+    }
+
+    const updated = await res.json();
+    const idx = bookings.findIndex(b => b._id === id);
+    if (idx !== -1) bookings[idx] = updated;
+
+    renderList();
+    renderCalendar();
+    msgEl.style.color = "green";
+    msgEl.textContent = "Status updated.";
+  } catch (err) {
+    msgEl.style.color = "red";
+    msgEl.textContent = "Could not update status. Try again.";
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save Status";
+  }
+}</script>
+</body>
+</html>

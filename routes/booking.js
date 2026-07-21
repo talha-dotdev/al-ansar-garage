@@ -33,3 +33,20 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+
+router.patch("/:id", verifyToken, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const updated = await Booking.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+        if (!updated) {
+            return res.status(404).json({ error: "Booking not found." });
+        }
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to update booking." });
+    }
+});

@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 // ---------- Serverless-safe MongoDB connection ----------
 let isConnected = false;
@@ -42,6 +43,7 @@ app.get("/", (req, res) => {
 app.use("/api/contact", contactRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/admin", adminRoutes);
+
 
 if (require.main === module) {
     app.listen(PORT, () => {

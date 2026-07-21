@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ContactMessage = require("../models/ContactMessage");
+const verifyToken = require("../middleware/auth");
 
 // POST /api/contact
 router.post("/", async (req, res) => {
@@ -22,7 +23,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET /api/contact (for your future admin panel)
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
     try {
         const messages = await ContactMessage.find().sort({ createdAt: -1 });
         res.json(messages);

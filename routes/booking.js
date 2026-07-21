@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
+const verifyToken = require("../middleware/auth");
 
 // POST /api/booking
 router.post("/", async (req, res) => {
@@ -22,7 +23,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET /api/booking (for your future admin panel)
-router.get("/", async (req, res) => {
+ router.get("/", verifyToken, async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
         res.json(bookings);

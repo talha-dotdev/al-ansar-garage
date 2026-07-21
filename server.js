@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const contactRoutes = require("./routes/contact");
 const bookingRoutes = require("./routes/booking");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,6 +41,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/contact", contactRoutes);
 app.use("/api/booking", bookingRoutes);
+app.use("/api/admin", adminRoutes);
 
 if (require.main === module) {
     app.listen(PORT, () => {

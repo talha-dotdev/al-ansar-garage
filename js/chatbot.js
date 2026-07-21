@@ -16,7 +16,7 @@ const CB_CONFIG = {
     email: "info@alansargarage.com",
     hours: "Sat - Thu, 8:00 AM - 8:00 PM",
     location: "Ajman Industrial Area, Ajman, UAE",
-    mapsLink: "https://maps.google.com/?q=Ajman+Industrial+Area+Ajman+UAE",
+    mapsLink: "https://maps.app.goo.gl/SSLqVUsikTgXWFfXA",
     services: [
         { name: "Engine Repair", desc: "Engine diagnostics, suspension, brake systems and complete mechanical maintenance." },
         { name: "Electrical Work", desc: "Advanced electrical diagnostics, battery replacement, wiring and ECU solutions." },
